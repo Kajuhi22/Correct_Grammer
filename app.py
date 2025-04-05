@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+import os
 
 # Load model and tokenizer
 model_name = "vennify/t5-base-grammar-correction"
@@ -9,7 +10,7 @@ model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
 
 # Initialize Flask
 app = Flask(__name__)
-CORS(app)  # Allow CORS requests from Chrome extension
+CORS(app)
 
 # API Endpoint
 @app.route("/correct", methods=["POST"])
@@ -25,5 +26,7 @@ def correct():
 
     return jsonify({"corrected": corrected_text})
 
+# Run app on Render
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
